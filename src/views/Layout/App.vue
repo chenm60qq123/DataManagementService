@@ -7,6 +7,11 @@
           <img width="40" style="margin-top: 5px" src="../../assets/images/logo.svg" alt="">
         </span>
       </div>
+      <div class="header-btn" @click="sidebarToggle">
+          <div class="icon-left">
+            <i class="el-icon-back"></i>
+          </div>
+        </div>
       <span class="header-btn" @click="hiddenSidebar">
         <i class="el-icon-menu"></i>
       </span>
@@ -90,7 +95,7 @@
               text-color="#fff"
               :default-active="$route.path" class="menu" @open="handleOpen" @close="handleClose"
               :collapse="isCollapse">
-            <template v-for="(menu_v,menu_k) in menu">
+            <!-- <template v-for="(menu_v,menu_k) in menu">
               <el-submenu v-if="menu_v.children" :index="menu_k">
                 <template slot="title">
                   <i :class="menu_v.icon"></i>
@@ -107,14 +112,11 @@
                 <i :class="menu_v.icon"></i>
                 <span slot="title">{{ menu_v.name }}</span>
               </el-menu-item>
-            </template>
+            </template> -->
+            <MenuItems v-for="(item,index) in menus" :item="item" :key="index"></MenuItems>
           </el-menu>
         </div>
-        <div class="sidebar-toggle" @click="sidebarToggle">
-          <div class="icon-left">
-            <i class="el-icon-back"></i>
-          </div>
-        </div>
+        
       </div>
       <div class="app-body">
         <NavBar id="nav-bar" v-if="switchTabBar" :style="fixedTabBar && switchTabBar?'position: fixed;top: 0;':''"></NavBar>
@@ -135,6 +137,7 @@
   import EuiFooter from '~/views/Layout/Footer.vue';
   import NavBar from './NavBar.vue'
   import Menu from '~/menu/index';
+  import MenuItems from '~/components/Menu/MenuItem.vue';
 
   export default {
     data() {
@@ -144,6 +147,25 @@
         siteName: this.$Config.siteName,
         isCollapse: false,
         menu: Menu,
+        menus:[
+          {
+             name: '短信管理',
+              icon: 'fa fa-comments',
+              children: [
+              {
+                icon: 'fa fa-pencil-square-o',
+                name: '草稿箱',
+                path: "/ssm_management_draftbox",
+              },
+              {
+                icon: 'fa fa-tachometer',
+                name: '发件箱',
+                path: "/ssm_management_outbox",
+              }
+            ]
+          }
+        ],
+        routes:this.$router.options.routes,
       };
     },
     methods: {
@@ -228,7 +250,7 @@
       setTimeout(()=>{this.NavBarWidth();},1000)
     },
     components: {
-      EuiFooter, NavBar
+      EuiFooter, NavBar,MenuItems
     },
   }
 </script>
@@ -280,6 +302,7 @@
   .sidebar-hidden.sidebar-close{
     .aside{
       margin-left: -64px;
+      
     }
   }
 
@@ -301,7 +324,7 @@
       transition: all 0.3s ease-in-out;
       .menu{
         overflow-y: auto;
-        height: calc(~'100vh - 100px');
+        height: calc(~'100vh');
       }
       .sidebar-toggle{
         position: relative;
